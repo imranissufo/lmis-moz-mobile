@@ -2,6 +2,7 @@ apply plugin: 'com.android.application'
 apply plugin: 'io.fabric'
 
 repositories {
+    google()
     jcenter()
     maven { url 'https://maven.fabric.io/public' }
 }
@@ -38,9 +39,9 @@ android {
         }
         release {
             storeFile file("../scripts/lmis_moz.jks")
-            storePassword System.getenv("KSTOREPWD")
+            storePassword "!EBus&tre46A"
             keyAlias "clintonhealthaccess"
-            keyPassword System.getenv("KEYPWD")
+            keyPassword "!EBus&tre46A"
         }
     }
 
