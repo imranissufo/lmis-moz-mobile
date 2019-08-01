@@ -75,6 +75,7 @@ public class RegimenItemAdapter implements JsonSerializer<RegimenItem>, JsonDese
         result.addProperty("patientsOnTreatment", src.getAmount());
         result.addProperty("hf", src.getHf());
         result.addProperty("chw", src.getChw());
+        result.addProperty("comunitaryPharmacy", src.getPharmacy());
         return result;
     }
 }

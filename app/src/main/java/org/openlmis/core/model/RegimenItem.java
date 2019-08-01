@@ -51,4 +51,9 @@ public class RegimenItem extends BaseModel{
     @SerializedName("chw")
     @DatabaseField
     private Long chw;
+
+    @Expose
+    @SerializedName("comunitaryPharmacy")
+    @DatabaseField
+    private Long pharmacy;
 }

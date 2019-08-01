@@ -69,6 +69,8 @@ public class MMIARequisitionFragment extends BaseReportFragment implements MMIAR
 
     @InjectView(R.id.tv_regime_total)
     protected TextView tvRegimeTotal;
+    @InjectView(R.id.tv_regime_total_pharmacy)
+    protected TextView tvRegimeTotalPharmacy;
 
     @InjectView(R.id.et_comment)
     protected TextView etComment;
@@ -91,7 +93,6 @@ public class MMIARequisitionFragment extends BaseReportFragment implements MMIAR
     MMIARequisitionPresenter presenter;
 
     private long formId;
-    private long previousFormId;
     protected View containerView;
     private Date periodEndDate;
 
@@ -105,7 +106,6 @@ public class MMIARequisitionFragment extends BaseReportFragment implements MMIAR
         super.onCreate(savedInstanceState);
 
         formId = getActivity().getIntent().getLongExtra(Constants.PARAM_FORM_ID, 0);
-        previousFormId = getActivity().getIntent().getLongExtra(Constants.PARAM_PREVIOUS_FORM, 0);
         periodEndDate = ((Date) getActivity().getIntent().getSerializableExtra(Constants.PARAM_SELECTED_INVENTORY_DATE));
     }
 
@@ -186,7 +186,7 @@ public class MMIARequisitionFragment extends BaseReportFragment implements MMIAR
     public void refreshRequisitionForm(RnRForm form) {
         scrollView.setVisibility(View.VISIBLE);
         rnrFormList.initView(form.getRnrFormItemListWrapper());
-        regimeListView.initView(tvRegimeTotal, presenter);
+        regimeListView.initView(tvRegimeTotal,tvRegimeTotalPharmacy, presenter);
         mmiaInfoListView.initView(form.getBaseInfoItemListWrapper());
         InflateFreezeHeaderView();
         getActivity().setTitle(getString(R.string.label_mmia_title, DateUtil.formatDateWithoutYear(form.getPeriodBegin()), DateUtil.formatDateWithoutYear(form.getPeriodEnd())));
@@ -215,6 +215,7 @@ public class MMIARequisitionFragment extends BaseReportFragment implements MMIAR
         etComment.addTextChangedListener(commentTextWatcher);
         tvRegimeTotal.addTextChangedListener(totalTextWatcher);
 
+
         actionPanelView.setListener(getOnCompleteListener(), getOnSaveListener());
         scrollView.setOnTouchListener(new View.OnTouchListener() {
             @Override
@@ -234,7 +235,10 @@ public class MMIARequisitionFragment extends BaseReportFragment implements MMIAR
             @Override
             public void onSingleClick(View v) {
                 loading();
-                Subscription subscription = presenter.getSaveFormObservable(rnrFormList.itemFormList, regimeListView.getDataList(), mmiaInfoListView.getDataList(), etComment.getText().toString())
+                Subscription subscription = presenter.getSaveFormObservable(rnrFormList.itemFormList,
+                        regimeListView.getDataList(),
+                        mmiaInfoListView.getDataList(),
+                        etComment.getText().toString())
                         .subscribe(getOnSavedSubscriber());
                 subscriptions.add(subscription);
             }
@@ -268,8 +272,13 @@ public class MMIARequisitionFragment extends BaseReportFragment implements MMIAR
         return new SingleClickButtonListener() {
             @Override
             public void onSingleClick(View v) {
-                if (rnrFormList.isCompleted() && regimeListView.isCompleted() && mmiaInfoListView.isCompleted()) {
-                    presenter.setViewModels(rnrFormList.itemFormList, regimeListView.getDataList(), mmiaInfoListView.getDataList(), etComment.getText().toString());
+                if (rnrFormList.isCompleted()
+                        && regimeListView.isCompleted()
+                        && mmiaInfoListView.isCompleted()) {
+                    presenter.setViewModels(rnrFormList.itemFormList,
+                            regimeListView.getDataList(),
+                            mmiaInfoListView.getDataList(),
+                            etComment.getText().toString());
                     if (!presenter.validateFormPeriod()) {
                         ToastUtil.show(R.string.msg_requisition_not_unique);
                     } else {
@@ -340,9 +349,9 @@ public class MMIARequisitionFragment extends BaseReportFragment implements MMIAR
     };
 
     private void highlightTotalDifference() {
-            regimeListView.deHighLightTotal();
-            mmiaInfoListView.deHighLightTotal();
-            tvMismatch.setVisibility(View.INVISIBLE);
+        regimeListView.deHighLightTotal();
+        mmiaInfoListView.deHighLightTotal();
+        tvMismatch.setVisibility(View.INVISIBLE);
     }
 
     private boolean hasEmptyColumn() {

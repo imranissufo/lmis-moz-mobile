@@ -112,7 +112,10 @@ public class MMIARequisitionPresenter extends BaseRequisitionPresenter {
     }
 
 
-    public void setViewModels(List<RnrFormItem> formItems, List<RegimenItem> regimenItemList, List<BaseInfoItem> baseInfoItemList, String comments) {
+    public void setViewModels(List<RnrFormItem> formItems,
+                              List<RegimenItem> regimenItemList,
+                              List<BaseInfoItem> baseInfoItemList,
+                              String comments) {
         rnRForm.setRnrFormItemListWrapper(formItems);
         rnRForm.setRegimenItemListWrapper(regimenItemList);
         rnRForm.setBaseInfoItemListWrapper(baseInfoItemList);
@@ -180,7 +183,10 @@ public class MMIARequisitionPresenter extends BaseRequisitionPresenter {
         }).observeOn(AndroidSchedulers.mainThread()).subscribeOn(Schedulers.io());
     }
 
-    public Observable<Void> getSaveFormObservable(final List<RnrFormItem> rnrFormItems, final List<RegimenItem> regimenItems, final List<BaseInfoItem> baseInfoItems, final String comment) {
+    public Observable<Void> getSaveFormObservable(final List<RnrFormItem> rnrFormItems,
+                                                  final List<RegimenItem> regimenItems,
+                                                  final List<BaseInfoItem> baseInfoItems,
+                                                  final String comment) {
         return Observable.create(new Observable.OnSubscribe<Void>() {
             @Override
             public void call(Subscriber<? super Void> subscriber) {

@@ -29,6 +29,7 @@ import org.joda.time.DateTime;
 import org.openlmis.core.LMISApp;
 import org.openlmis.core.utils.DateUtil;
 import org.openlmis.core.utils.ListUtil;
+import org.openlmis.core.view.widget.MMIARegimeList;
 import org.roboguice.shaded.goole.common.base.Predicate;
 
 import java.util.Collection;
@@ -162,13 +163,22 @@ public class RnRForm extends BaseModel {
         return monthOffset > 0 || (monthOffset == 0 && today.getDayOfMonth() >= Period.INVENTORY_END_DAY_NEXT);
     }
 
-    public static long calculateTotalRegimenAmount(Collection<RegimenItem> list) {
+    public static long calculateTotalRegimenAmount(Collection<RegimenItem> list, MMIARegimeList.COUNTTYPE counttype) {
         long totalRegimenNumber = 0;
-        for (RegimenItem item : list) {
-            if (item.getAmount() != null) {
-                totalRegimenNumber += item.getAmount();
+        if (MMIARegimeList.COUNTTYPE.PHARMACY == counttype) {
+            for (RegimenItem item : list) {
+                if (item.getPharmacy() != null) {
+                    totalRegimenNumber += item.getPharmacy();
+                }
+            }
+        } else if (MMIARegimeList.COUNTTYPE.AMOUNT == counttype) {
+            for (RegimenItem item : list) {
+                if (item.getAmount() != null) {
+                    totalRegimenNumber += item.getAmount();
+                }
             }
         }
+
 
         return totalRegimenNumber;
     }

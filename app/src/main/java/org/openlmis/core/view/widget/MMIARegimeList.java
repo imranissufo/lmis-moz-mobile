@@ -24,7 +24,6 @@ import android.content.Context;
 import android.text.Editable;
 import android.text.TextUtils;
 import android.util.AttributeSet;
-import android.view.Gravity;
 import android.view.KeyEvent;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -53,6 +52,7 @@ import rx.Subscriber;
 public class MMIARegimeList extends LinearLayout {
     private Context context;
     private TextView totalView;
+    private TextView totalPharmcy;
     private List<RegimenItem> dataList;
     private List<EditText> editTexts;
     private LayoutInflater layoutInflater;
@@ -61,6 +61,11 @@ public class MMIARegimeList extends LinearLayout {
     protected MMIARequisitionPresenter presenter;
 
     private MMIARegimeListener regimeListener;
+
+    public static enum COUNTTYPE {
+        AMOUNT,
+        PHARMACY,
+    }
 
     public MMIARegimeList(Context context) {
         super(context);
@@ -79,12 +84,13 @@ public class MMIARegimeList extends LinearLayout {
         layoutInflater = LayoutInflater.from(context);
     }
 
-    public void initView(TextView totalView, MMIARequisitionPresenter presenter) {
+    public void initView(TextView totalView, TextView totalPharmacy, MMIARequisitionPresenter presenter) {
         this.presenter = presenter;
         this.dataList = presenter.getRnRForm().getRegimenItemListWrapper();
         this.editTexts = new ArrayList<>();
         initCategoryList(dataList);
         this.totalView = totalView;
+        this.totalPharmcy = totalPharmacy;
         addHeaderView();
 
         for (int i = 0; i < adults.size(); i++) {
@@ -105,7 +111,8 @@ public class MMIARegimeList extends LinearLayout {
         }
 
         editTexts.get(editTexts.size() - 1).setImeOptions(EditorInfo.IME_ACTION_DONE);
-        totalView.setText(String.valueOf(getTotal()));
+        totalView.setText(String.valueOf(getTotal(COUNTTYPE.AMOUNT)));
+        totalPharmacy.setText(String.valueOf(getTotal(COUNTTYPE.PHARMACY)));
     }
 
     private boolean isCustomEnable() {
@@ -171,46 +178,58 @@ public class MMIARegimeList extends LinearLayout {
     }
 
     private void addItemView(final RegimenItem item, boolean isHeaderView, final int position) {
-        View view = layoutInflater.inflate(R.layout.item_regime, this, false);
-        TextView tvName = (TextView) view.findViewById(R.id.tv_name);
-        EditText etTotal = (EditText) view.findViewById(R.id.et_total);
-
         if (isHeaderView) {
-            tvName.setGravity(Gravity.CENTER);
-            etTotal.setEnabled(false);
-            view.setBackgroundResource(R.color.color_mmia_speed_list_header);
-
-            tvName.setText(R.string.label_regime_header_name);
-            etTotal.setText(getResources().getString(R.string.total).toUpperCase());
+            addHeaderViewImpl();
         } else {
-            editTexts.add(etTotal);
+            View view = layoutInflater.inflate(R.layout.item_regime, this, false);
+            TextView regimeName = (TextView) view.findViewById(R.id.regime_name);
+            EditText regimeAmount = (EditText) view.findViewById(R.id.regime_amount);
+            EditText regimePharmacyAmount = (EditText) view.findViewById(R.id.regime_pharmacy_amount);
+
+            editTexts.add(regimeAmount);
             Regimen regimen = item.getRegimen();
-            tvName.setText(regimen.getName());
+            regimeName.setText(regimen.getName());
 
             if (item.getAmount() != null) {
-                etTotal.setText(String.valueOf(item.getAmount()));
+                regimeAmount.setText(String.valueOf(item.getAmount()));
+            }
+            if (item.getPharmacy() != null) {
+                regimePharmacyAmount.setText(String.valueOf(item.getPharmacy()));
             }
 
             setBackground(view, regimen);
 
-            etTotal.addTextChangedListener(new EditTextWatcher(item));
+            regimeAmount.addTextChangedListener(new EditTextWatcher(item, COUNTTYPE.AMOUNT));
+            regimePharmacyAmount.addTextChangedListener(new EditTextWatcher(item, COUNTTYPE.PHARMACY));
 
-            etTotal.setOnEditorActionListener(new TextView.OnEditorActionListener() {
-                @Override
-                public boolean onEditorAction(TextView v, int actionId, KeyEvent event) {
-                    if (actionId == EditorInfo.IME_ACTION_NEXT) {
-                        if ((position + 1) < editTexts.size()) {
-                            editTexts.get(position + 1).requestFocus();
-                            return true;
-                        }
-                    }
-                    return false;
-                }
-            });
+            regimeAmount.setOnEditorActionListener(getOnEditorActionListener(position));
+            regimePharmacyAmount.setOnEditorActionListener(getOnEditorActionListener(position));
 
             setDelIconForCustomRegime(item, view);
+            addView(view);
         }
+
+    }
+
+    private void addHeaderViewImpl() {
+        View view = layoutInflater.inflate(R.layout.item_regime_header, this, false);
         addView(view);
+
+    }
+
+    private TextView.OnEditorActionListener getOnEditorActionListener(int position) {
+        return new TextView.OnEditorActionListener() {
+            @Override
+            public boolean onEditorAction(TextView v, int actionId, KeyEvent event) {
+                if (actionId == EditorInfo.IME_ACTION_NEXT) {
+                    if ((position + 1) < editTexts.size()) {
+                        editTexts.get(position + 1).requestFocus();
+                        return true;
+                    }
+                }
+                return false;
+            }
+        };
     }
 
     private void setBackground(View view, Regimen regimen) {
@@ -274,10 +293,12 @@ public class MMIARegimeList extends LinearLayout {
 
     public void highLightTotal() {
         totalView.setBackground(getResources().getDrawable(R.drawable.border_bg_red));
+        totalPharmcy.setBackground(getResources().getDrawable(R.drawable.border_bg_red));
     }
 
     public void deHighLightTotal() {
         totalView.setBackground(getResources().getDrawable(R.color.color_page_gray));
+        totalPharmcy.setBackground(getResources().getDrawable(R.color.color_page_gray));
     }
 
     public boolean hasEmptyField() {
@@ -291,7 +312,7 @@ public class MMIARegimeList extends LinearLayout {
 
     public void refreshRegimeView() {
         removeAllViews();
-        initView(totalView, presenter);
+        initView(totalView, totalPharmcy, presenter);
     }
 
     public void addCustomRegimenItem(Regimen regimen) {
@@ -332,9 +353,11 @@ public class MMIARegimeList extends LinearLayout {
     class EditTextWatcher implements android.text.TextWatcher {
 
         private final RegimenItem item;
+        private final COUNTTYPE counttype;
 
-        public EditTextWatcher(RegimenItem item) {
+        public EditTextWatcher(RegimenItem item, COUNTTYPE counttype) {
             this.item = item;
+            this.counttype = counttype;
         }
 
         @Override
@@ -350,12 +373,14 @@ public class MMIARegimeList extends LinearLayout {
         @Override
         public void afterTextChanged(Editable editable) {
 
-            try {
+            if (COUNTTYPE.AMOUNT == counttype) {
                 item.setAmount(Long.parseLong(editable.toString()));
-            } catch (NumberFormatException e) {
                 item.setAmount(null);
+                totalView.setText(String.valueOf(getTotal(COUNTTYPE.AMOUNT)));
+            } else if (COUNTTYPE.PHARMACY == counttype) {
+                item.setPharmacy(Long.parseLong(editable.toString()));
+                totalPharmcy.setText(String.valueOf(getTotal(COUNTTYPE.PHARMACY)));
             }
-            totalView.setText(String.valueOf(getTotal()));
 
         }
     }
@@ -371,13 +396,14 @@ public class MMIARegimeList extends LinearLayout {
         return true;
     }
 
-    public long getTotal() {
-        return RnRForm.calculateTotalRegimenAmount(dataList);
+    public long getTotal(COUNTTYPE counttype) {
+        return RnRForm.calculateTotalRegimenAmount(dataList, counttype);
     }
 
 
     public interface MMIARegimeListener {
         void loading();
+
         void loaded();
     }
 

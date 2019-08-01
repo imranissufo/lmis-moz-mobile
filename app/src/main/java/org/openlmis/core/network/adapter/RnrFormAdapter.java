@@ -39,7 +39,6 @@ import org.openlmis.core.model.RnRForm;
 import org.openlmis.core.model.RnRFormSignature;
 import org.openlmis.core.model.RnrFormItem;
 import org.openlmis.core.model.repository.ProgramRepository;
-import org.openlmis.core.model.repository.RnrFormRepository;
 import org.openlmis.core.model.repository.RnrFormSignatureRepository;
 
 import java.lang.reflect.Type;
@@ -53,8 +52,6 @@ public class RnrFormAdapter implements JsonSerializer<RnRForm>, JsonDeserializer
 
     @Inject
     public ProgramRepository programRepository;
-    @Inject
-    RnrFormRepository rnrFormRepository;
     @Inject
     RnrFormSignatureRepository signatureRepository;
 

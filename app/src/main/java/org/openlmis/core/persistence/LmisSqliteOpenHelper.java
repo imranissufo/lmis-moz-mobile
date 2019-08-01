@@ -52,7 +52,9 @@ import org.openlmis.core.persistence.migrations.AddParentCodeToProgramTable;
 import org.openlmis.core.persistence.migrations.AddProgramToRegimen;
 import org.openlmis.core.persistence.migrations.AddRapidTestColumnsTemplate;
 import org.openlmis.core.persistence.migrations.AddRapidTestProgram;
+import org.openlmis.core.persistence.migrations.AddRegimePharmacy;
 import org.openlmis.core.persistence.migrations.AddRequestedColumnToStockItems;
+import org.openlmis.core.persistence.migrations.AddRnrBaseInfoItem;
 import org.openlmis.core.persistence.migrations.AddServiceItemTable;
 import org.openlmis.core.persistence.migrations.AddSignatureFieldInStockMovementItemTable;
 import org.openlmis.core.persistence.migrations.AddSubmittedDateToRnRForm;
@@ -92,6 +94,7 @@ import org.openlmis.core.persistence.migrations.UpdateRapidTestColumnsTemplate;
 import org.openlmis.core.persistence.migrations.UpdateReportType;
 import org.openlmis.core.persistence.migrations.UpdateStockCardProductType;
 import org.openlmis.core.persistence.migrations.UpdateRegimenType;
+
 import java.util.ArrayList;
 import java.util.List;
 
@@ -167,7 +170,8 @@ public final class LmisSqliteOpenHelper extends OrmLiteSqliteOpenHelper {
             add(new UpdateRapidTestColumnsTemplate());
             add(new UpdateRapidTestCode());
             add(new UpdateReportType());
-            //add(new ChangeMalariaTreatmentsAgain());
+            add(new AddRegimePharmacy());
+            add(new AddRnrBaseInfoItem());
         }
     };
     private static int instanceCount = 0;

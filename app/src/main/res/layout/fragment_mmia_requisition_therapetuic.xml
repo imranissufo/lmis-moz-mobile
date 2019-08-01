@@ -1,0 +1,123 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:background="@drawable/border_bg_light_gray_blod"
+    android:divider="@drawable/divider_horizontal"
+    android:orientation="vertical"
+    android:showDividers="middle">
+
+    <RelativeLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:background="@color/color_gray"
+        android:orientation="horizontal">
+
+        <TextView
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_centerInParent="true"
+            android:layout_toStartOf="@id/therapetuic_total"
+            android:gravity="center_horizontal"
+            android:text="@string/mmia_therapeutic"
+            android:textColor="@color/color_white"
+            android:textSize="@dimen/font_size_regular" />
+
+        <TextView
+            android:id="@+id/therapetuic_total"
+            android:layout_width="@dimen/mmia_spread_item_common_width"
+            android:layout_height="wrap_content"
+            android:layout_toStartOf="@id/therapetuic_pharmacy" />
+
+        <TextView
+            android:id="@+id/therapetuic_pharmacy"
+            android:layout_width="@dimen/mmia_spread_item_common_width"
+            android:layout_height="wrap_content"
+            android:layout_alignParentEnd="true" />
+    </RelativeLayout>
+
+    <RelativeLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="horizontal">
+
+        <TextView
+            style="@style/MMIA.Regime.Total.Label"
+            android:layout_toStartOf="@id/therapetuic_1st_total"
+            android:text="@string/mmia_1stline" />
+
+        <EditText
+            android:id="@+id/therapetuic_1st_total"
+            style="@style/MMIA.Regime.Total.Edit"
+            android:layout_toStartOf="@id/therapetuic_1st_pharmacy" />
+
+        <EditText
+            android:id="@+id/therapetuic_1st_pharmacy"
+            style="@style/MMIA.Regime.Total.Edit.End" />
+    </RelativeLayout>
+
+    <RelativeLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="horizontal">
+
+        <TextView
+            style="@style/MMIA.Regime.Total.Label"
+            android:layout_toStartOf="@id/therapetuic_2st_total"
+            android:text="@string/mmia_2ndline" />
+
+        <EditText
+            android:id="@+id/therapetuic_2st_total"
+            style="@style/MMIA.Regime.Total.Edit"
+            android:layout_toStartOf="@id/therapetuic_2st_pharmacy" />
+
+        <EditText
+            android:id="@+id/therapetuic_2st_pharmacy"
+            style="@style/MMIA.Regime.Total.Edit.End" />
+    </RelativeLayout>
+
+    <RelativeLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="horizontal">
+
+        <TextView
+            style="@style/MMIA.Regime.Total.Label"
+            android:layout_toStartOf="@id/therapetuic_3st_total"
+            android:text="@string/mmia_3rdline" />
+
+        <EditText
+            android:id="@+id/therapetuic_3st_total"
+            style="@style/MMIA.Regime.Total.Edit"
+            android:layout_toStartOf="@id/therapetuic_3st_pharmacy" />
+
+        <EditText
+            android:id="@+id/therapetuic_3st_pharmacy"
+            style="@style/MMIA.Regime.Total.Edit.End" />
+    </RelativeLayout>
+
+    <LinearLayout
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_gravity="end"
+        android:divider="@drawable/divider_vertical"
+        android:gravity="end"
+        android:showDividers="middle">
+
+        <TextView
+            style="@style/MMIA.RegimeTotalLabel"
+            android:layout_width="80dp"
+            android:layout_height="match_parent"
+            android:labelFor="@+id/tv_regime_total1"
+            android:minHeight="30dp"
+            android:text="@string/total" />
+
+        <TextView
+            android:id="@+id/tv_regime_total1"
+            style="@style/MMIA.RegimeTotalText" />
+
+        <TextView
+            android:id="@+id/tv_regime_total12"
+            style="@style/MMIA.RegimeTotalText" />
+    </LinearLayout>
+</LinearLayout>
