@@ -40,14 +40,6 @@ public class RegimenItemAdapter implements JsonSerializer<RegimenItem>, JsonDese
     public RegimenItem deserialize(JsonElement json, Type typeOfT, JsonDeserializationContext context) throws JsonParseException {
         RegimenItem regimenItem = gson.fromJson(json, RegimenItem.class);
 
-        RegimeType regimeType = null;
-        String categoryName = json.getAsJsonObject().get("categoryName").getAsString();
-        if(categoryName.equals(RegimeType.Adults.toString())) {
-            regimeType = RegimeType.Adults;
-        } else if (categoryName.equals(RegimeType.Paediatrics.toString())) {
-            regimeType = RegimeType.Paediatrics;
-        }
-
         try {
             Regimen regimen = regimenRepository.getByCode(json.getAsJsonObject().get("code").getAsString());
             if (regimen == null) {

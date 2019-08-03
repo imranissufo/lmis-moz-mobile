@@ -33,6 +33,7 @@ import org.openlmis.core.model.Product;
 import org.openlmis.core.model.ProductProgram;
 import org.openlmis.core.model.Program;
 import org.openlmis.core.model.RegimenItem;
+import org.openlmis.core.model.RegimenItemThreeLines;
 import org.openlmis.core.model.ReportTypeForm;
 import org.openlmis.core.model.RnRForm;
 import org.openlmis.core.model.RnrFormItem;
@@ -70,6 +71,9 @@ public class RnrFormRepository {
 
     @Inject
     RegimenItemRepository regimenItemRepository;
+
+    @Inject
+    RegimenItemThreeLineRepository regimenItemThreeLineRepository;
 
     @Inject
     RnrFormSignatureRepository signatureRepository;
@@ -140,7 +144,7 @@ public class RnrFormRepository {
 
     public void createOrUpdateWithItems(final RnRForm form) throws LMISException {
         try {
-            TransactionManager.callInTransaction(LmisSqliteOpenHelper.getInstance(context).getConnectionSource(),new Callable<Object>() {
+            TransactionManager.callInTransaction(LmisSqliteOpenHelper.getInstance(context).getConnectionSource(), new Callable<Object>() {
                 @Override
                 public Object call() throws Exception {
                     genericDao.createOrUpdate(form);
@@ -247,6 +251,7 @@ public class RnrFormRepository {
         if (form != null) {
             rnrFormItemRepository.deleteFormItems(form.getRnrFormItemListWrapper());
             regimenItemRepository.deleteRegimenItems(form.getRegimenItemListWrapper());
+            regimenItemThreeLineRepository.deleteRegimeThreeLineItems(form.getRegimenThreeLineListWrapper());
             baseInfoItemRepository.batchDelete(form.getBaseInfoItemListWrapper());
             signatureRepository.batchDelete(form.getSignaturesWrapper());
             genericDao.delete(form);
@@ -321,6 +326,10 @@ public class RnrFormRepository {
         return new ArrayList<>();
     }
 
+    protected List<RegimenItemThreeLines> generateRegimeThreeLineItems(RnRForm form) throws LMISException {
+        return new ArrayList<>();
+    }
+
     protected List<BaseInfoItem> generateBaseInfoItems(RnRForm form) {
         return new ArrayList<>();
     }
@@ -344,6 +353,7 @@ public class RnrFormRepository {
                     List<StockCard> stockCards = stockRepository.getStockCardsBeforePeriodEnd(rnrForm);
                     rnrFormItemRepository.batchCreateOrUpdate(generateRnrFormItems(rnrForm, stockCards));
                     regimenItemRepository.batchCreateOrUpdate(generateRegimeItems(rnrForm));
+                    regimenItemThreeLineRepository.batchCreateOrUpdate(generateRegimeThreeLineItems(rnrForm));
                     baseInfoItemRepository.batchCreateOrUpdate(generateBaseInfoItems(rnrForm));
                     genericDao.refresh(rnrForm);
                     return null;
@@ -417,7 +427,7 @@ public class RnrFormRepository {
         } catch (Exception e) {
             return new ArrayList<>();
         }
-        if(reportTypeForm == null) {
+        if (reportTypeForm == null) {
             return new ArrayList<>();
         }
 
@@ -457,10 +467,11 @@ public class RnrFormRepository {
         genericDao.refresh(rnRForm);
     }
 
-    private void createOrUpdateRnrWrappers(RnRForm form) throws SQLException, LMISException {
+    private void createOrUpdateRnrWrappers(RnRForm form) throws LMISException {
         rnrFormItemRepository.batchCreateOrUpdate(form.getRnrFormItemListWrapper());
         signatureRepository.batchCreateOrUpdate(form.getSignaturesWrapper());
         regimenItemRepository.batchCreateOrUpdate(form.getRegimenItemListWrapper());
+        regimenItemThreeLineRepository.batchCreateOrUpdate(form.getRegimenThreeLineListWrapper());
         baseInfoItemRepository.batchCreateOrUpdate(form.getBaseInfoItemListWrapper());
     }
 

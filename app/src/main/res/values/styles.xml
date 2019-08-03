@@ -284,7 +284,7 @@
         <item name="android:layout_width">@dimen/mmia_spread_item_common_width</item>
         <item name="android:inputType">number</item>
         <item name="android:paddingStart">6dp</item>
-        <item name="android:background">@drawable/border_bg_light_gray</item>
+        <item name="android:background">@drawable/border_bg_light_right_gray</item>
     </style>
 
     <style name="MMIA.Regime.Total.Edit.End" parent="MMIA.Regime.Total.Edit">

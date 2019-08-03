@@ -30,6 +30,7 @@ import org.openlmis.core.model.BaseInfoItem;
 import org.openlmis.core.model.Product;
 import org.openlmis.core.model.Regimen;
 import org.openlmis.core.model.RegimenItem;
+import org.openlmis.core.model.RegimenItemThreeLines;
 import org.openlmis.core.model.RnRForm;
 import org.openlmis.core.model.RnrFormItem;
 import org.openlmis.core.model.StockCard;
@@ -44,6 +45,8 @@ import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+
+import javax.annotation.Nullable;
 
 import roboguice.inject.InjectResource;
 
@@ -92,6 +95,13 @@ public class MMIARepository extends RnrFormRepository {
     @InjectResource(R.string.table_prophylaxis_total)
     private String ATTR_TABLE_PROPHYLAXIS_TOTAL;
 
+    @InjectResource(R.string.mmia_1stline)
+    private String ATTR_REGIME_TYPE_FIRST_LINE;
+    @InjectResource(R.string.mmia_2ndline)
+    private String ATTR_REGIME_TYPE_SECOND_LINE;
+    @InjectResource(R.string.mmia_3rdline)
+    private String ATTR_REGIME_TYPE_THIRD_LINE;
+
     @Inject
     ProgramRepository programRepository;
 
@@ -117,6 +127,24 @@ public class MMIARepository extends RnrFormRepository {
             regimenItems.add(item);
         }
         return regimenItems;
+    }
+
+    @Override
+    protected List<RegimenItemThreeLines> generateRegimeThreeLineItems(RnRForm form) {
+        List<String> regimeThreeLines = new ArrayList<>();
+        regimeThreeLines.add(ATTR_REGIME_TYPE_FIRST_LINE);
+        regimeThreeLines.add(ATTR_REGIME_TYPE_SECOND_LINE);
+        regimeThreeLines.add(ATTR_REGIME_TYPE_THIRD_LINE);
+
+        return FluentIterable.from(regimeThreeLines).transform(new Function<String, RegimenItemThreeLines>() {
+            @Nullable
+            @Override
+            public RegimenItemThreeLines apply(@Nullable String type) {
+                RegimenItemThreeLines itemThreeLines = new RegimenItemThreeLines(type);
+                itemThreeLines.setForm(form);
+                return itemThreeLines;
+            }
+        }).toList();
     }
 
     @Override

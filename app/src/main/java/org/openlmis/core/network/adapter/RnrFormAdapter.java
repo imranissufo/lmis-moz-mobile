@@ -103,6 +103,7 @@ public class RnrFormAdapter implements JsonSerializer<RnRForm>, JsonDeserializer
         root.add("products", jsonParser.parse(gson.toJson(rnRForm.getRnrFormItemListWrapper())));
         root.add("regimens", jsonParser.parse(gson.toJson(rnRForm.getRegimenItemListWrapper())));
         root.add("patientQuantifications", jsonParser.parse(gson.toJson(rnRForm.getBaseInfoItemListWrapper())));
+        root.add("threeline", jsonParser.parse(gson.toJson(rnRForm.getRegimenThreeLineListWrapper())));
         root.add("rnrSignatures", jsonParser.parse(gson.toJson(signatureList)));
         root.addProperty("agentCode", UserInfoMgr.getInstance().getUser().getFacilityCode());
         root.addProperty("programCode", programCode);

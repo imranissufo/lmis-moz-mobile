@@ -91,6 +91,7 @@
     <string name="label_rnrfrom_left_header">Medicine</string>
     <string name="label_regime_header_name">Therapeutic Regime</string>
     <string name="total">Total</string>
+    <string name="total_title">Total patients</string>
     <string name="total_pharmacy">Comunitary pharmacy</string>
     <string name="ape">APEs</string>
     <string name="label_mmia_info_header_name">TYPE</string>
@@ -99,6 +100,7 @@
     <string name="label_mmia_speed_info_header2">age range of TARV patients</string>
     <string name="label_mmia_speed_info_header3">prophylaxis</string>
     <string name="hint_mmia_comment">Observations</string>
+    <string name="mmia_comment_should_not_empty">MMIA comment should not empty</string>
     <string name="btn_complete">Complete</string>
     <string name="btn_new_movement">NEW MOVEMENT</string>
     <string name="btn_submit">Submit for Approval</string>

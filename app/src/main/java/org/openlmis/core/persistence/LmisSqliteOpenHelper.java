@@ -52,6 +52,7 @@ import org.openlmis.core.persistence.migrations.AddParentCodeToProgramTable;
 import org.openlmis.core.persistence.migrations.AddProgramToRegimen;
 import org.openlmis.core.persistence.migrations.AddRapidTestColumnsTemplate;
 import org.openlmis.core.persistence.migrations.AddRapidTestProgram;
+import org.openlmis.core.persistence.migrations.AddRegimeDisplayOrder;
 import org.openlmis.core.persistence.migrations.AddRegimePharmacy;
 import org.openlmis.core.persistence.migrations.AddRequestedColumnToStockItems;
 import org.openlmis.core.persistence.migrations.AddRnrBaseInfoItem;
@@ -79,6 +80,7 @@ import org.openlmis.core.persistence.migrations.CreateProgramDataFormSignatureTa
 import org.openlmis.core.persistence.migrations.CreateProgramDataFormTable;
 import org.openlmis.core.persistence.migrations.CreateProgramDataItemsTable;
 import org.openlmis.core.persistence.migrations.CreateRegimeShortCodeTable;
+import org.openlmis.core.persistence.migrations.CreateRegimeThreeLineTable;
 import org.openlmis.core.persistence.migrations.CreateReportTypeTable;
 import org.openlmis.core.persistence.migrations.CreateRnRFormSignature;
 import org.openlmis.core.persistence.migrations.CreateServiceTable;
@@ -172,6 +174,8 @@ public final class LmisSqliteOpenHelper extends OrmLiteSqliteOpenHelper {
             add(new UpdateReportType());
             add(new AddRegimePharmacy());
             add(new AddRnrBaseInfoItem());
+            add(new CreateRegimeThreeLineTable());
+            add(new AddRegimeDisplayOrder());
         }
     };
     private static int instanceCount = 0;

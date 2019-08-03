@@ -48,7 +48,7 @@
 
                         <TextView
                             style="@style/MMIA.RegimeTotalLabel"
-                            android:layout_width="80dp"
+                            android:layout_width="@dimen/mmia_spread_item_common_width"
                             android:layout_height="match_parent"
                             android:labelFor="@+id/tv_regime_total"
                             android:minHeight="30dp"

@@ -45,6 +45,7 @@ import org.openlmis.core.utils.ToastUtil;
 import org.openlmis.core.utils.ViewUtil;
 import org.openlmis.core.view.widget.MMIAInfoList;
 import org.openlmis.core.view.widget.MMIARegimeList;
+import org.openlmis.core.view.widget.MMIARegimeThreeLineList;
 import org.openlmis.core.view.widget.MMIARnrForm;
 import org.openlmis.core.view.widget.RnrFormHorizontalScrollView;
 import org.openlmis.core.view.widget.SingleClickButtonListener;
@@ -61,6 +62,9 @@ public class MMIARequisitionFragment extends BaseReportFragment implements MMIAR
     @InjectView(R.id.rnr_form_list)
     protected MMIARnrForm rnrFormList;
 
+    @InjectView(R.id.mmia_regime_three_line_list)
+    protected MMIARegimeThreeLineList mmiaRegimeThreeLineListView;
+
     @InjectView(R.id.regime_list)
     protected MMIARegimeList regimeListView;
 
@@ -71,6 +75,11 @@ public class MMIARequisitionFragment extends BaseReportFragment implements MMIAR
     protected TextView tvRegimeTotal;
     @InjectView(R.id.tv_regime_total_pharmacy)
     protected TextView tvRegimeTotalPharmacy;
+
+    @InjectView(R.id.mmia_regime_three_line_total)
+    protected TextView mmiaRegimeThreeLineTotal;
+    @InjectView(R.id.mmia_regime_three_line_pharmacy)
+    protected TextView mmiaRegimeThreeLinePharmacy;
 
     @InjectView(R.id.et_comment)
     protected TextView etComment;
@@ -171,6 +180,18 @@ public class MMIARequisitionFragment extends BaseReportFragment implements MMIAR
                 MMIARequisitionFragment.this.loaded();
             }
         });
+
+        mmiaRegimeThreeLineListView.setRegimeThreeLineListener(new MMIARegimeThreeLineList.MMIARegimeThreeLineListener() {
+            @Override
+            public void loading() {
+                MMIARequisitionFragment.this.loading();
+            }
+
+            @Override
+            public void loaded() {
+                MMIARequisitionFragment.this.loaded();
+            }
+        });
     }
 
     private void disableFreezeHeaderScroll() {
@@ -186,7 +207,8 @@ public class MMIARequisitionFragment extends BaseReportFragment implements MMIAR
     public void refreshRequisitionForm(RnRForm form) {
         scrollView.setVisibility(View.VISIBLE);
         rnrFormList.initView(form.getRnrFormItemListWrapper());
-        regimeListView.initView(tvRegimeTotal,tvRegimeTotalPharmacy, presenter);
+        mmiaRegimeThreeLineListView.initView(mmiaRegimeThreeLineTotal, mmiaRegimeThreeLinePharmacy, presenter);
+        regimeListView.initView(tvRegimeTotal, tvRegimeTotalPharmacy, presenter);
         mmiaInfoListView.initView(form.getBaseInfoItemListWrapper());
         InflateFreezeHeaderView();
         getActivity().setTitle(getString(R.string.label_mmia_title, DateUtil.formatDateWithoutYear(form.getPeriodBegin()), DateUtil.formatDateWithoutYear(form.getPeriodEnd())));
@@ -213,9 +235,6 @@ public class MMIARequisitionFragment extends BaseReportFragment implements MMIAR
 
     protected void bindListeners() {
         etComment.addTextChangedListener(commentTextWatcher);
-        tvRegimeTotal.addTextChangedListener(totalTextWatcher);
-
-
         actionPanelView.setListener(getOnCompleteListener(), getOnSaveListener());
         scrollView.setOnTouchListener(new View.OnTouchListener() {
             @Override
@@ -238,6 +257,7 @@ public class MMIARequisitionFragment extends BaseReportFragment implements MMIAR
                 Subscription subscription = presenter.getSaveFormObservable(rnrFormList.itemFormList,
                         regimeListView.getDataList(),
                         mmiaInfoListView.getDataList(),
+                        mmiaRegimeThreeLineListView.getDataList(),
                         etComment.getText().toString())
                         .subscribe(getOnSavedSubscriber());
                 subscriptions.add(subscription);
@@ -274,19 +294,33 @@ public class MMIARequisitionFragment extends BaseReportFragment implements MMIAR
             public void onSingleClick(View v) {
                 if (rnrFormList.isCompleted()
                         && regimeListView.isCompleted()
-                        && mmiaInfoListView.isCompleted()) {
+                        && mmiaInfoListView.isCompleted()
+                        && mmiaRegimeThreeLineListView.isCompleted()) {
                     presenter.setViewModels(rnrFormList.itemFormList,
                             regimeListView.getDataList(),
                             mmiaInfoListView.getDataList(),
+                            mmiaRegimeThreeLineListView.getDataList(),
                             etComment.getText().toString());
                     if (!presenter.validateFormPeriod()) {
                         ToastUtil.show(R.string.msg_requisition_not_unique);
+                    } else if (shouldCommentMandatory()) {
+                        etComment.setError(getString(R.string.mmia_comment_should_not_empty));
                     } else {
                         showSignDialog();
                     }
                 }
             }
         };
+    }
+
+
+    private boolean shouldCommentMandatory() {
+        boolean isTotalEqual = Long.parseLong(mmiaRegimeThreeLineTotal.getText().toString())
+                != Long.parseLong(tvRegimeTotal.getText().toString());
+        boolean isPhaymacyEqual = Long.parseLong(mmiaRegimeThreeLinePharmacy.getText().toString())
+                != Long.parseLong(tvRegimeTotalPharmacy.getText().toString());
+
+        return isTotalEqual || isPhaymacyEqual;
     }
 
     private void bindFreezeHeaderListener() {
@@ -342,20 +376,15 @@ public class MMIARequisitionFragment extends BaseReportFragment implements MMIAR
         }
     };
 
-    TextWatcher totalTextWatcher = new SimpleTextWatcher() {
-        @Override
-        public void afterTextChanged(Editable s) {
-        }
-    };
-
     private void highlightTotalDifference() {
         regimeListView.deHighLightTotal();
+        mmiaRegimeThreeLineListView.deHighLightTotal();
         mmiaInfoListView.deHighLightTotal();
         tvMismatch.setVisibility(View.INVISIBLE);
     }
 
     private boolean hasEmptyColumn() {
-        return regimeListView.hasEmptyField() || mmiaInfoListView.hasEmptyField();
+        return regimeListView.hasEmptyField() || mmiaInfoListView.hasEmptyField() || mmiaRegimeThreeLineListView.hasEmptyField();
     }
 
     @Override

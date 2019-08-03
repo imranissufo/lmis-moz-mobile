@@ -20,7 +20,7 @@
         android:layout_height="match_parent"
         android:background="@null"
         android:gravity="center_vertical|center_horizontal"
-        android:text="@string/total" />
+        android:text="@string/total_title" />
 
     <TextView
         android:id="@+id/et_total_pharmacy_title"

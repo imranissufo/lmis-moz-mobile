@@ -89,7 +89,6 @@ public class MMIAInfoList extends LinearLayout {
     public void initView(List<BaseInfoItem> list) {
         this.dataList = list;
         for (BaseInfoItem item : list) {
-            Log.d("caopeng", ""+item);
             List<BaseInfoItem> tableList = tableMap.get(item.getTableName()) == null ? new ArrayList<>() : tableMap.get(item.getTableName());
             tableList.add(item);
             tableMap.put(item.getTableName(), tableList);

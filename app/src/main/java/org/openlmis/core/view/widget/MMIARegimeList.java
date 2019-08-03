@@ -54,7 +54,8 @@ public class MMIARegimeList extends LinearLayout {
     private TextView totalView;
     private TextView totalPharmcy;
     private List<RegimenItem> dataList;
-    private List<EditText> editTexts;
+    private List<EditText> editTotalTexts;
+    private List<EditText> editPharmacyTexts;
     private LayoutInflater layoutInflater;
     private ArrayList<RegimenItem> adults;
     private ArrayList<RegimenItem> paediatrics;
@@ -62,7 +63,7 @@ public class MMIARegimeList extends LinearLayout {
 
     private MMIARegimeListener regimeListener;
 
-    public static enum COUNTTYPE {
+    public enum COUNTTYPE {
         AMOUNT,
         PHARMACY,
     }
@@ -87,7 +88,8 @@ public class MMIARegimeList extends LinearLayout {
     public void initView(TextView totalView, TextView totalPharmacy, MMIARequisitionPresenter presenter) {
         this.presenter = presenter;
         this.dataList = presenter.getRnRForm().getRegimenItemListWrapper();
-        this.editTexts = new ArrayList<>();
+        this.editTotalTexts = new ArrayList<>();
+        this.editPharmacyTexts = new ArrayList<>();
         initCategoryList(dataList);
         this.totalView = totalView;
         this.totalPharmcy = totalPharmacy;
@@ -110,7 +112,8 @@ public class MMIARegimeList extends LinearLayout {
             addPaediatricsBtnView();
         }
 
-        editTexts.get(editTexts.size() - 1).setImeOptions(EditorInfo.IME_ACTION_DONE);
+        editTotalTexts.get(editTotalTexts.size() - 1).setImeOptions(EditorInfo.IME_ACTION_DONE);
+        editPharmacyTexts.get(editPharmacyTexts.size() - 1).setImeOptions(EditorInfo.IME_ACTION_DONE);
         totalView.setText(String.valueOf(getTotal(COUNTTYPE.AMOUNT)));
         totalPharmacy.setText(String.valueOf(getTotal(COUNTTYPE.PHARMACY)));
     }
@@ -186,7 +189,8 @@ public class MMIARegimeList extends LinearLayout {
             EditText regimeAmount = (EditText) view.findViewById(R.id.regime_amount);
             EditText regimePharmacyAmount = (EditText) view.findViewById(R.id.regime_pharmacy_amount);
 
-            editTexts.add(regimeAmount);
+            editTotalTexts.add(regimeAmount);
+            editPharmacyTexts.add(regimePharmacyAmount);
             Regimen regimen = item.getRegimen();
             regimeName.setText(regimen.getName());
 
@@ -202,8 +206,8 @@ public class MMIARegimeList extends LinearLayout {
             regimeAmount.addTextChangedListener(new EditTextWatcher(item, COUNTTYPE.AMOUNT));
             regimePharmacyAmount.addTextChangedListener(new EditTextWatcher(item, COUNTTYPE.PHARMACY));
 
-            regimeAmount.setOnEditorActionListener(getOnEditorActionListener(position));
-            regimePharmacyAmount.setOnEditorActionListener(getOnEditorActionListener(position));
+            regimeAmount.setOnEditorActionListener(getOnEditorActionListener(position, COUNTTYPE.AMOUNT));
+            regimePharmacyAmount.setOnEditorActionListener(getOnEditorActionListener(position, COUNTTYPE.PHARMACY));
 
             setDelIconForCustomRegime(item, view);
             addView(view);
@@ -217,15 +221,22 @@ public class MMIARegimeList extends LinearLayout {
 
     }
 
-    private TextView.OnEditorActionListener getOnEditorActionListener(int position) {
+    private TextView.OnEditorActionListener getOnEditorActionListener(int position, COUNTTYPE counttype) {
         return new TextView.OnEditorActionListener() {
             @Override
             public boolean onEditorAction(TextView v, int actionId, KeyEvent event) {
-                if (actionId == EditorInfo.IME_ACTION_NEXT) {
-                    if ((position + 1) < editTexts.size()) {
-                        editTexts.get(position + 1).requestFocus();
+                if (COUNTTYPE.AMOUNT == counttype && actionId == EditorInfo.IME_ACTION_NEXT) {
+                    if ((position + 1) < editTotalTexts.size()) {
+                        editTotalTexts.get(position + 1).requestFocus();
                         return true;
                     }
+                } else if (COUNTTYPE.PHARMACY == counttype && actionId == EditorInfo.IME_ACTION_NEXT) {
+                    if ((position + 1) < editPharmacyTexts.size()) {
+                        editTotalTexts.get(position + 1).requestFocus();
+                        return true;
+                    }
+                } else {
+                    return false;
                 }
                 return false;
             }
@@ -372,28 +383,34 @@ public class MMIARegimeList extends LinearLayout {
 
         @Override
         public void afterTextChanged(Editable editable) {
-
             if (COUNTTYPE.AMOUNT == counttype) {
                 item.setAmount(Long.parseLong(editable.toString()));
-                item.setAmount(null);
                 totalView.setText(String.valueOf(getTotal(COUNTTYPE.AMOUNT)));
             } else if (COUNTTYPE.PHARMACY == counttype) {
                 item.setPharmacy(Long.parseLong(editable.toString()));
                 totalPharmcy.setText(String.valueOf(getTotal(COUNTTYPE.PHARMACY)));
             }
-
         }
     }
 
     public boolean isCompleted() {
-        for (EditText editText : editTexts) {
+        boolean completedTotal = true;
+        boolean completedPharmacy = true;
+        for (EditText editText : editTotalTexts) {
             if (TextUtils.isEmpty(editText.getText().toString())) {
                 editText.setError(context.getString(R.string.hint_error_input));
                 editText.requestFocus();
-                return false;
+                completedTotal = false;
             }
         }
-        return true;
+        for (EditText editText : editPharmacyTexts) {
+            if (TextUtils.isEmpty(editText.getText().toString())) {
+                editText.setError(context.getString(R.string.hint_error_input));
+                editText.requestFocus();
+                completedPharmacy = false;
+            }
+        }
+        return completedTotal && completedPharmacy;
     }
 
     public long getTotal(COUNTTYPE counttype) {

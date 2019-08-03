@@ -30,6 +30,7 @@ import org.openlmis.core.LMISApp;
 import org.openlmis.core.utils.DateUtil;
 import org.openlmis.core.utils.ListUtil;
 import org.openlmis.core.view.widget.MMIARegimeList;
+import org.openlmis.core.view.widget.MMIARegimeThreeLineList;
 import org.roboguice.shaded.goole.common.base.Predicate;
 
 import java.util.Collection;
@@ -69,6 +70,12 @@ public class RnRForm extends BaseModel {
     @Expose
     @SerializedName("regimens")
     private List<RegimenItem> regimenItemListWrapper;
+
+    @ForeignCollectionField()
+    private ForeignCollection<RegimenItemThreeLines> regimenThreeLineList;
+    @Expose
+    @SerializedName("threeline")
+    private List<RegimenItemThreeLines> regimenThreeLinesWrapper;
 
     @ForeignCollectionField()
     private ForeignCollection<BaseInfoItem> baseInfoItemList;
@@ -178,9 +185,25 @@ public class RnRForm extends BaseModel {
                 }
             }
         }
-
-
         return totalRegimenNumber;
+    }
+
+    public static long caculateTotalRegimenTypeAmount(Collection<RegimenItemThreeLines> list, MMIARegimeThreeLineList.COUNTTYPE counttype) {
+        long totalNumber = 0;
+        if (MMIARegimeThreeLineList.COUNTTYPE.PATIENTSAMOUNT == counttype) {
+            for (RegimenItemThreeLines item : list) {
+                if (item.getPatientsAmount() != null) {
+                    totalNumber += item.getPatientsAmount();
+                }
+            }
+        } else if (MMIARegimeThreeLineList.COUNTTYPE.PHARMACYAMOUNT == counttype) {
+            for (RegimenItemThreeLines item : list) {
+                if (item.getPharmacyAmount() != null) {
+                    totalNumber += item.getPharmacyAmount();
+                }
+            }
+        }
+        return totalNumber;
     }
 
     public List<RnrFormItem> getRnrFormItemListWrapper() {
@@ -238,6 +261,11 @@ public class RnRForm extends BaseModel {
     public List<RegimenItem> getRegimenItemListWrapper() {
         regimenItemListWrapper = ListUtil.wrapOrEmpty(regimenItemList, regimenItemListWrapper);
         return regimenItemListWrapper;
+    }
+
+    public List<RegimenItemThreeLines> getRegimenThreeLineListWrapper() {
+        regimenThreeLinesWrapper = ListUtil.wrapOrEmpty(regimenThreeLineList, regimenThreeLinesWrapper);
+        return regimenThreeLinesWrapper;
     }
 
     public List<RnRFormSignature> getSignaturesWrapper() {

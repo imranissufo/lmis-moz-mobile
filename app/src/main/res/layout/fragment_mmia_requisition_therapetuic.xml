@@ -17,84 +17,20 @@
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_centerInParent="true"
-            android:layout_toStartOf="@id/therapetuic_total"
             android:gravity="center_horizontal"
             android:text="@string/mmia_therapeutic"
             android:textColor="@color/color_white"
             android:textSize="@dimen/font_size_regular" />
-
-        <TextView
-            android:id="@+id/therapetuic_total"
-            android:layout_width="@dimen/mmia_spread_item_common_width"
-            android:layout_height="wrap_content"
-            android:layout_toStartOf="@id/therapetuic_pharmacy" />
-
-        <TextView
-            android:id="@+id/therapetuic_pharmacy"
-            android:layout_width="@dimen/mmia_spread_item_common_width"
-            android:layout_height="wrap_content"
-            android:layout_alignParentEnd="true" />
     </RelativeLayout>
 
-    <RelativeLayout
+    <org.openlmis.core.view.widget.MMIARegimeThreeLineList
+        android:id="@+id/mmia_regime_three_line_list"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:orientation="horizontal">
+        android:divider="@drawable/divider_horizontal"
+        android:showDividers="middle">
 
-        <TextView
-            style="@style/MMIA.Regime.Total.Label"
-            android:layout_toStartOf="@id/therapetuic_1st_total"
-            android:text="@string/mmia_1stline" />
-
-        <EditText
-            android:id="@+id/therapetuic_1st_total"
-            style="@style/MMIA.Regime.Total.Edit"
-            android:layout_toStartOf="@id/therapetuic_1st_pharmacy" />
-
-        <EditText
-            android:id="@+id/therapetuic_1st_pharmacy"
-            style="@style/MMIA.Regime.Total.Edit.End" />
-    </RelativeLayout>
-
-    <RelativeLayout
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:orientation="horizontal">
-
-        <TextView
-            style="@style/MMIA.Regime.Total.Label"
-            android:layout_toStartOf="@id/therapetuic_2st_total"
-            android:text="@string/mmia_2ndline" />
-
-        <EditText
-            android:id="@+id/therapetuic_2st_total"
-            style="@style/MMIA.Regime.Total.Edit"
-            android:layout_toStartOf="@id/therapetuic_2st_pharmacy" />
-
-        <EditText
-            android:id="@+id/therapetuic_2st_pharmacy"
-            style="@style/MMIA.Regime.Total.Edit.End" />
-    </RelativeLayout>
-
-    <RelativeLayout
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:orientation="horizontal">
-
-        <TextView
-            style="@style/MMIA.Regime.Total.Label"
-            android:layout_toStartOf="@id/therapetuic_3st_total"
-            android:text="@string/mmia_3rdline" />
-
-        <EditText
-            android:id="@+id/therapetuic_3st_total"
-            style="@style/MMIA.Regime.Total.Edit"
-            android:layout_toStartOf="@id/therapetuic_3st_pharmacy" />
-
-        <EditText
-            android:id="@+id/therapetuic_3st_pharmacy"
-            style="@style/MMIA.Regime.Total.Edit.End" />
-    </RelativeLayout>
+    </org.openlmis.core.view.widget.MMIARegimeThreeLineList>
 
     <LinearLayout
         android:layout_width="wrap_content"
@@ -106,18 +42,17 @@
 
         <TextView
             style="@style/MMIA.RegimeTotalLabel"
-            android:layout_width="80dp"
+            android:layout_width="@dimen/mmia_spread_item_common_width"
             android:layout_height="match_parent"
-            android:labelFor="@+id/tv_regime_total1"
             android:minHeight="30dp"
             android:text="@string/total" />
 
         <TextView
-            android:id="@+id/tv_regime_total1"
+            android:id="@+id/mmia_regime_three_line_total"
             style="@style/MMIA.RegimeTotalText" />
 
         <TextView
-            android:id="@+id/tv_regime_total12"
+            android:id="@+id/mmia_regime_three_line_pharmacy"
             style="@style/MMIA.RegimeTotalText" />
     </LinearLayout>
 </LinearLayout>
