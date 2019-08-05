@@ -23,6 +23,7 @@ import android.content.Intent;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.text.Editable;
+import android.text.TextUtils;
 import android.text.TextWatcher;
 import android.view.LayoutInflater;
 import android.view.MotionEvent;
@@ -319,8 +320,9 @@ public class MMIARequisitionFragment extends BaseReportFragment implements MMIAR
                 != Long.parseLong(tvRegimeTotal.getText().toString());
         boolean isPhaymacyEqual = Long.parseLong(mmiaRegimeThreeLinePharmacy.getText().toString())
                 != Long.parseLong(tvRegimeTotalPharmacy.getText().toString());
+        boolean isCommentEmpty = TextUtils.isEmpty(etComment.getText().toString());
 
-        return isTotalEqual || isPhaymacyEqual;
+        return isCommentEmpty &&(isTotalEqual || isPhaymacyEqual);
     }
 
     private void bindFreezeHeaderListener() {
