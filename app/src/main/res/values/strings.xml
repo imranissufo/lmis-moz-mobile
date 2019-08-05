@@ -96,9 +96,6 @@
     <string name="ape">APEs</string>
     <string name="label_mmia_info_header_name">TYPE</string>
     <string name="label_mmia_speed_info_header">Number of patients on ART</string>
-    <string name="label_mmia_speed_info_header1">Months dispensed</string>
-    <string name="label_mmia_speed_info_header2">age range of TARV patients</string>
-    <string name="label_mmia_speed_info_header3">prophylaxis</string>
     <string name="hint_mmia_comment">Observations</string>
     <string name="mmia_comment_should_not_empty">MMIA comment should not empty</string>
     <string name="btn_complete">Complete</string>

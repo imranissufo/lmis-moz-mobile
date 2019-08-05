@@ -63,6 +63,8 @@ public class MMIARegimeList extends LinearLayout {
 
     private MMIARegimeListener regimeListener;
 
+    private boolean isPharmacyEmpty = false;
+
     public enum COUNTTYPE {
         AMOUNT,
         PHARMACY,
@@ -87,6 +89,7 @@ public class MMIARegimeList extends LinearLayout {
 
     public void initView(TextView totalView, TextView totalPharmacy, MMIARequisitionPresenter presenter) {
         this.presenter = presenter;
+        this.isPharmacyEmpty = presenter.getRnRForm().getRegimenThreeLineListWrapper().isEmpty();
         this.dataList = presenter.getRnRForm().getRegimenItemListWrapper();
         this.editTotalTexts = new ArrayList<>();
         this.editPharmacyTexts = new ArrayList<>();
@@ -113,9 +116,12 @@ public class MMIARegimeList extends LinearLayout {
         }
 
         editTotalTexts.get(editTotalTexts.size() - 1).setImeOptions(EditorInfo.IME_ACTION_DONE);
-        editPharmacyTexts.get(editPharmacyTexts.size() - 1).setImeOptions(EditorInfo.IME_ACTION_DONE);
         totalView.setText(String.valueOf(getTotal(COUNTTYPE.AMOUNT)));
-        totalPharmacy.setText(String.valueOf(getTotal(COUNTTYPE.PHARMACY)));
+        if (isPharmacyEmpty) {
+        } else {
+            editPharmacyTexts.get(editPharmacyTexts.size() - 1).setImeOptions(EditorInfo.IME_ACTION_DONE);
+            editPharmacyTexts.get(editPharmacyTexts.size() - 1).setImeOptions(EditorInfo.IME_ACTION_DONE);
+        }
     }
 
     private boolean isCustomEnable() {
@@ -189,25 +195,32 @@ public class MMIARegimeList extends LinearLayout {
             EditText regimeAmount = (EditText) view.findViewById(R.id.regime_amount);
             EditText regimePharmacyAmount = (EditText) view.findViewById(R.id.regime_pharmacy_amount);
 
+            if (!isPharmacyEmpty) {
+                editPharmacyTexts.add(regimePharmacyAmount);
+                if (item.getPharmacy() != null) {
+                    regimePharmacyAmount.setText(String.valueOf(item.getPharmacy()));
+                }
+                regimePharmacyAmount.addTextChangedListener(new EditTextWatcher(item, COUNTTYPE.PHARMACY));
+                regimePharmacyAmount.setOnEditorActionListener(getOnEditorActionListener(position, COUNTTYPE.PHARMACY));
+
+            } else {
+                regimePharmacyAmount.setVisibility(GONE);
+            }
+
             editTotalTexts.add(regimeAmount);
-            editPharmacyTexts.add(regimePharmacyAmount);
             Regimen regimen = item.getRegimen();
             regimeName.setText(regimen.getName());
 
             if (item.getAmount() != null) {
                 regimeAmount.setText(String.valueOf(item.getAmount()));
             }
-            if (item.getPharmacy() != null) {
-                regimePharmacyAmount.setText(String.valueOf(item.getPharmacy()));
-            }
+
 
             setBackground(view, regimen);
 
             regimeAmount.addTextChangedListener(new EditTextWatcher(item, COUNTTYPE.AMOUNT));
-            regimePharmacyAmount.addTextChangedListener(new EditTextWatcher(item, COUNTTYPE.PHARMACY));
 
             regimeAmount.setOnEditorActionListener(getOnEditorActionListener(position, COUNTTYPE.AMOUNT));
-            regimePharmacyAmount.setOnEditorActionListener(getOnEditorActionListener(position, COUNTTYPE.PHARMACY));
 
             setDelIconForCustomRegime(item, view);
             addView(view);
@@ -217,6 +230,7 @@ public class MMIARegimeList extends LinearLayout {
 
     private void addHeaderViewImpl() {
         View view = layoutInflater.inflate(R.layout.item_regime_header, this, false);
+        view.findViewById(R.id.et_total_pharmacy_title).setVisibility(isPharmacyEmpty ? GONE : VISIBLE);
         addView(view);
 
     }
@@ -304,12 +318,21 @@ public class MMIARegimeList extends LinearLayout {
 
     public void highLightTotal() {
         totalView.setBackground(getResources().getDrawable(R.drawable.border_bg_red));
-        totalPharmcy.setBackground(getResources().getDrawable(R.drawable.border_bg_red));
+        if (isPharmacyEmpty) {
+            totalPharmcy.setVisibility(GONE);
+        } else {
+            totalPharmcy.setBackground(getResources().getDrawable(R.drawable.border_bg_red));
+        }
+
     }
 
     public void deHighLightTotal() {
         totalView.setBackground(getResources().getDrawable(R.color.color_page_gray));
-        totalPharmcy.setBackground(getResources().getDrawable(R.color.color_page_gray));
+        if (isPharmacyEmpty) {
+            totalPharmcy.setBackground(getResources().getDrawable(R.color.color_page_gray));
+        } else {
+            totalPharmcy.setVisibility(GONE);
+        }
     }
 
     public boolean hasEmptyField() {

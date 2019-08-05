@@ -81,12 +81,11 @@ public class MMIARegimeThreeLineList extends LinearLayout {
         return getContext().getString(id);
     }
 
-    public void initView(TextView total, TextView pharmacyTotal, MMIARequisitionPresenter presenter) {
+    public void initView(TextView total, TextView pharmacyTotal, List<RegimenItemThreeLines> dataList) {
         mmiaThreeLinePatientsTotal = total;
         mmiaThreeLinePharmacyTotal = pharmacyTotal;
-        this.presenter = presenter;
         dataMap = new HashMap<>();
-        this.dataList = presenter.getRnRForm().getRegimenThreeLineListWrapper();
+        this.dataList = dataList;
         initCategoryList();
         addViewItem(dataMap.get(ATTR_FIRST_LINE));
         addViewItem(dataMap.get(ATTR_SECOND_LINE));

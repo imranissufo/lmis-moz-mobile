@@ -30,12 +30,14 @@ import android.view.MotionEvent;
 import android.view.View;
 import android.view.ViewGroup;
 import android.view.ViewTreeObserver;
+import android.widget.LinearLayout;
 import android.widget.ScrollView;
 import android.widget.TextView;
 
 import org.openlmis.core.R;
 import org.openlmis.core.manager.SharedPreferenceMgr;
 import org.openlmis.core.model.Regimen;
+import org.openlmis.core.model.RegimenItemThreeLines;
 import org.openlmis.core.model.RnRForm;
 import org.openlmis.core.presenter.BaseReportPresenter;
 import org.openlmis.core.presenter.MMIARequisitionPresenter;
@@ -52,6 +54,7 @@ import org.openlmis.core.view.widget.RnrFormHorizontalScrollView;
 import org.openlmis.core.view.widget.SingleClickButtonListener;
 
 import java.util.Date;
+import java.util.List;
 
 import roboguice.RoboGuice;
 import roboguice.inject.InjectView;
@@ -65,6 +68,8 @@ public class MMIARequisitionFragment extends BaseReportFragment implements MMIAR
 
     @InjectView(R.id.mmia_regime_three_line_list)
     protected MMIARegimeThreeLineList mmiaRegimeThreeLineListView;
+    @InjectView(R.id.mmia_threapeutic_layout)
+    private LinearLayout mmiaThreaPeuticLayout;
 
     @InjectView(R.id.regime_list)
     protected MMIARegimeList regimeListView;
@@ -208,7 +213,13 @@ public class MMIARequisitionFragment extends BaseReportFragment implements MMIAR
     public void refreshRequisitionForm(RnRForm form) {
         scrollView.setVisibility(View.VISIBLE);
         rnrFormList.initView(form.getRnrFormItemListWrapper());
-        mmiaRegimeThreeLineListView.initView(mmiaRegimeThreeLineTotal, mmiaRegimeThreeLinePharmacy, presenter);
+        List<RegimenItemThreeLines> dataList = presenter.getRnRForm().getRegimenThreeLineListWrapper();
+        if (!dataList.isEmpty()) {
+            mmiaRegimeThreeLineListView.initView(mmiaRegimeThreeLineTotal, mmiaRegimeThreeLinePharmacy, dataList);
+        } else {
+            mmiaThreaPeuticLayout.setVisibility(View.GONE);
+            tvRegimeTotalPharmacy.setVisibility(View.GONE);
+        }
         regimeListView.initView(tvRegimeTotal, tvRegimeTotalPharmacy, presenter);
         mmiaInfoListView.initView(form.getBaseInfoItemListWrapper());
         InflateFreezeHeaderView();
@@ -322,7 +333,7 @@ public class MMIARequisitionFragment extends BaseReportFragment implements MMIAR
                 != Long.parseLong(tvRegimeTotalPharmacy.getText().toString());
         boolean isCommentEmpty = TextUtils.isEmpty(etComment.getText().toString());
 
-        return isCommentEmpty &&(isTotalEqual || isPhaymacyEqual);
+        return isCommentEmpty && (isTotalEqual || isPhaymacyEqual);
     }
 
     private void bindFreezeHeaderListener() {
@@ -380,7 +391,9 @@ public class MMIARequisitionFragment extends BaseReportFragment implements MMIAR
 
     private void highlightTotalDifference() {
         regimeListView.deHighLightTotal();
-        mmiaRegimeThreeLineListView.deHighLightTotal();
+        if (mmiaThreaPeuticLayout.getVisibility() != View.GONE) {
+            mmiaRegimeThreeLineListView.deHighLightTotal();
+        }
         mmiaInfoListView.deHighLightTotal();
         tvMismatch.setVisibility(View.INVISIBLE);
     }

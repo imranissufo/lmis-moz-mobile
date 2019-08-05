@@ -52,6 +52,8 @@ public class MMIAInfoList extends LinearLayout {
     private String ATTR_TABLE_PATIENTS;
     private String ATTR_TABLE_PROPHYLAXIS;
 
+    private String ATTR_TABLE_ORIGIN;
+
     private boolean hasDataChanged = false;
 
     public MMIAInfoList(Context context) {
@@ -80,6 +82,7 @@ public class MMIAInfoList extends LinearLayout {
         ATTR_TABLE_DISPENSED = getString(R.string.table_dispensed);
         ATTR_TABLE_PATIENTS = getString(R.string.table_patients);
         ATTR_TABLE_PROPHYLAXIS = getString(R.string.table_prophylaxis);
+        ATTR_TABLE_ORIGIN = getString(R.string.label_mmia_speed_info_header);
     }
 
     private String getString(int id) {
@@ -99,10 +102,14 @@ public class MMIAInfoList extends LinearLayout {
     }
 
     private void addItemView() {
-        addTableView(tableMap.get(ATTR_TABLE_TRAV), ATTR_TABLE_TRAV);
-        addTableView(tableMap.get(ATTR_TABLE_DISPENSED), ATTR_TABLE_DISPENSED);
-        addTableView(tableMap.get(ATTR_TABLE_PATIENTS), ATTR_TABLE_PATIENTS);
-        addTableView(tableMap.get(ATTR_TABLE_PROPHYLAXIS), ATTR_TABLE_PROPHYLAXIS);
+        if (tableMap.size() != 1) {
+            addTableView(tableMap.get(ATTR_TABLE_TRAV), ATTR_TABLE_TRAV);
+            addTableView(tableMap.get(ATTR_TABLE_DISPENSED), ATTR_TABLE_DISPENSED);
+            addTableView(tableMap.get(ATTR_TABLE_PATIENTS), ATTR_TABLE_PATIENTS);
+            addTableView(tableMap.get(ATTR_TABLE_PROPHYLAXIS), ATTR_TABLE_PROPHYLAXIS);
+        } else {
+            addTableView(dataList, ATTR_TABLE_ORIGIN);
+        }
     }
 
     private void addTableView(List<BaseInfoItem> list, String tableName) {
@@ -150,7 +157,9 @@ public class MMIAInfoList extends LinearLayout {
     }
 
     public void deHighLightTotal() {
-        totalPatientsView.setBackground(getResources().getDrawable(R.color.color_page_gray));
+        if (totalPatientsView != null) {
+            totalPatientsView.setBackground(getResources().getDrawable(R.color.color_page_gray));
+        }
     }
 
     public boolean hasEmptyField() {
