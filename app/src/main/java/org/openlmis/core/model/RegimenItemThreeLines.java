@@ -22,12 +22,12 @@ public class RegimenItemThreeLines extends BaseModel {
     private String regimeTypes;
 
     @Expose
-    @SerializedName("patientsAmount")
+    @SerializedName("patientsOnTreatment")
     @DatabaseField
     private Long patientsAmount;
 
     @Expose
-    @SerializedName("pharmacyAmount")
+    @SerializedName("comunitaryPharmacy")
     @DatabaseField
     private Long pharmacyAmount;
 

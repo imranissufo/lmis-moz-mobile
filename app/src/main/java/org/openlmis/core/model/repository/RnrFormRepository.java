@@ -330,7 +330,7 @@ public class RnrFormRepository {
         return new ArrayList<>();
     }
 
-    protected List<BaseInfoItem> generateBaseInfoItems(RnRForm form) {
+    protected List<BaseInfoItem> generateBaseInfoItems(RnRForm form, MMIARepository.REPORT_TYPE type) {
         return new ArrayList<>();
     }
 
@@ -354,7 +354,7 @@ public class RnrFormRepository {
                     rnrFormItemRepository.batchCreateOrUpdate(generateRnrFormItems(rnrForm, stockCards));
                     regimenItemRepository.batchCreateOrUpdate(generateRegimeItems(rnrForm));
                     regimenItemThreeLineRepository.batchCreateOrUpdate(generateRegimeThreeLineItems(rnrForm));
-                    baseInfoItemRepository.batchCreateOrUpdate(generateBaseInfoItems(rnrForm));
+                    baseInfoItemRepository.batchCreateOrUpdate(generateBaseInfoItems(rnrForm, MMIARepository.REPORT_TYPE.NEW));
                     genericDao.refresh(rnrForm);
                     return null;
                 }

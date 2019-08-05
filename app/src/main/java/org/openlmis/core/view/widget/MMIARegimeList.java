@@ -117,8 +117,7 @@ public class MMIARegimeList extends LinearLayout {
 
         editTotalTexts.get(editTotalTexts.size() - 1).setImeOptions(EditorInfo.IME_ACTION_DONE);
         totalView.setText(String.valueOf(getTotal(COUNTTYPE.AMOUNT)));
-        if (isPharmacyEmpty) {
-        } else {
+        if (!isPharmacyEmpty) {
             editPharmacyTexts.get(editPharmacyTexts.size() - 1).setImeOptions(EditorInfo.IME_ACTION_DONE);
             editPharmacyTexts.get(editPharmacyTexts.size() - 1).setImeOptions(EditorInfo.IME_ACTION_DONE);
         }
@@ -329,9 +328,9 @@ public class MMIARegimeList extends LinearLayout {
     public void deHighLightTotal() {
         totalView.setBackground(getResources().getDrawable(R.color.color_page_gray));
         if (isPharmacyEmpty) {
-            totalPharmcy.setBackground(getResources().getDrawable(R.color.color_page_gray));
-        } else {
             totalPharmcy.setVisibility(GONE);
+        } else {
+            totalPharmcy.setBackground(getResources().getDrawable(R.color.color_page_gray));
         }
     }
 

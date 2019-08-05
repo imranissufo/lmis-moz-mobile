@@ -102,6 +102,27 @@ public class MMIARepository extends RnrFormRepository {
     @InjectResource(R.string.mmia_3rdline)
     private String ATTR_REGIME_TYPE_THIRD_LINE;
 
+
+    @InjectResource(R.string.label_new_patients)
+    public String ATTR_NEW_PATIENTS;
+    @InjectResource(R.string.label_sustaining)
+    public String ATTR_SUSTAINING;
+    @InjectResource(R.string.label_alteration)
+    public String ATTR_ALTERATION;
+    @InjectResource(R.string.label_total_month_dispense)
+    public String ATTR_TOTAL_MONTH_DISPENSE;
+    @InjectResource(R.string.label_total_patients)
+    public String ATTR_TOTAL_PATIENTS;
+    @InjectResource(R.string.label_ptv)
+    public String ATTR_PTV;
+    @InjectResource(R.string.label_ppe)
+    public String ATTR_PPE;
+
+    public enum REPORT_TYPE {
+        NEW,
+        OLD,
+    }
+
     @Inject
     ProgramRepository programRepository;
 
@@ -148,7 +169,26 @@ public class MMIARepository extends RnrFormRepository {
     }
 
     @Override
-    protected List<BaseInfoItem> generateBaseInfoItems(final RnRForm form) {
+    protected List<BaseInfoItem> generateBaseInfoItems(final RnRForm form, REPORT_TYPE type) {
+
+        if (REPORT_TYPE.NEW != type) {
+            ArrayList<String> attrs = new ArrayList<>();
+            attrs.add(ATTR_NEW_PATIENTS);
+            attrs.add(ATTR_SUSTAINING);
+            attrs.add(ATTR_ALTERATION);
+            attrs.add(ATTR_PTV);
+            attrs.add(ATTR_PPE);
+            attrs.add(ATTR_TOTAL_MONTH_DISPENSE);
+            attrs.add(ATTR_TOTAL_PATIENTS);
+
+            return FluentIterable.from(attrs).transform(new Function<String, BaseInfoItem>() {
+                @Override
+                public BaseInfoItem apply(String attr) {
+                    return new BaseInfoItem(attr, BaseInfoItem.TYPE.INT, form, "");
+                }
+            }).toList();
+        }
+
         Map<String, String> mAttrs = new HashMap<>();
         mAttrs.put(ATTR_TABLE_TRAV_NEW, ATTR_TABLE_TRAV);
         mAttrs.put(ATTR_TABLE_TRAV_MAINTENANCE, ATTR_TABLE_TRAV);

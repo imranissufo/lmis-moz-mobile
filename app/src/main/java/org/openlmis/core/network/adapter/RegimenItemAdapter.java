@@ -22,7 +22,6 @@ import java.lang.reflect.Type;
 
 import roboguice.RoboGuice;
 
-import static org.openlmis.core.model.Regimen.RegimeType;
 
 public class RegimenItemAdapter implements JsonSerializer<RegimenItem>, JsonDeserializer<RegimenItem> {
 
