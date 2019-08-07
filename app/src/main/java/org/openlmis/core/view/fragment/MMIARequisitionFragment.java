@@ -69,7 +69,7 @@ public class MMIARequisitionFragment extends BaseReportFragment implements MMIAR
     @InjectView(R.id.mmia_regime_three_line_list)
     protected MMIARegimeThreeLineList mmiaRegimeThreeLineListView;
     @InjectView(R.id.mmia_threapeutic_layout)
-    private LinearLayout mmiaThreaPeuticLayout;
+    protected LinearLayout mmiaThreaPeuticLayout;
 
     @InjectView(R.id.regime_list)
     protected MMIARegimeList regimeListView;
@@ -214,7 +214,7 @@ public class MMIARequisitionFragment extends BaseReportFragment implements MMIAR
         scrollView.setVisibility(View.VISIBLE);
         rnrFormList.initView(form.getRnrFormItemListWrapper());
         List<RegimenItemThreeLines> dataList = form.getRegimenThreeLineListWrapper();
-        if (!dataList.isEmpty()) {
+        if (dataList!=null && !dataList.isEmpty()) {
             mmiaRegimeThreeLineListView.initView(mmiaRegimeThreeLineTotal, mmiaRegimeThreeLinePharmacy, dataList);
         } else {
             mmiaThreaPeuticLayout.setVisibility(View.GONE);

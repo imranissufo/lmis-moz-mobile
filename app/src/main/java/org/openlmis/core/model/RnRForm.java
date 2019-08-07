@@ -283,6 +283,9 @@ public class RnRForm extends BaseModel {
         for (BaseInfoItem item : rnRForm.getBaseInfoItemListWrapper()) {
             item.setRnRForm(rnRForm);
         }
+        for (RegimenItemThreeLines itemThreeLines : rnRForm.getRegimenThreeLineListWrapper()) {
+            itemThreeLines.setForm(rnRForm);
+        }
     }
 
     public List<RnrFormItem> getDeactivatedAndUnsupportedProductItems(final List<String> supportedProductCodes) {
