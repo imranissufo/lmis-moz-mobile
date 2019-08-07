@@ -104,7 +104,6 @@ public class MMIARequisitionFragmentTest {
         regimeListView = mock(MMIARegimeList.class);
         mmiaInfoListView = mock(MMIAInfoList.class);
         mockRnrItemsHeaderFreeze = mock(ViewGroup.class);
-
         mmiaRequisitionFragment.regimeListView = regimeListView;
         mmiaRequisitionFragment.mmiaInfoListView = mmiaInfoListView;
         mmiaRequisitionFragment.rnrFormList = rnrFormList;
