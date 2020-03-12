@@ -29,7 +29,9 @@ public class LotRepository {
             public LotMovementItem operate(Dao<LotMovementItem, String> dao) throws SQLException, LMISException {
                 for (final LotMovementItem lotMovementItem : lotMovementItemListWrapper) {
                     createOrUpdateLotAndLotOnHand(lotMovementItem);
-                    createLotMovementItem(lotMovementItem);
+                    if (null != lotMovementItem.getMovementQuantity()) {
+                        createLotMovementItem(lotMovementItem);
+                    }
                 }
                 return null;
             }
@@ -40,30 +42,38 @@ public class LotRepository {
         final Lot lot = lotMovementItem.getLot();
         Lot existingLot = getLotByLotNumberAndProductId(lot.getLotNumber(), lot.getProduct().getId());
         LotOnHand lotOnHand;
+        if (null != lotMovementItem.getMovementQuantity()) {
+            if (existingLot == null) {
+                lot.setCreatedAt(new Date());
+                lot.setUpdatedAt(new Date());
+                createOrUpdateLot(lot);
 
-        if (existingLot == null) {
-            lot.setCreatedAt(new Date());
-            lot.setUpdatedAt(new Date());
-            createOrUpdateLot(lot);
+                lotOnHand = new LotOnHand(lot, lotMovementItem.getStockMovementItem().getStockCard(), lotMovementItem.getMovementQuantity());
+                createOrUpdateLotOnHand(lotOnHand);
 
-            lotOnHand = new LotOnHand(lot, lotMovementItem.getStockMovementItem().getStockCard(), lotMovementItem.getMovementQuantity());
-            createOrUpdateLotOnHand(lotOnHand);
-
-            lotMovementItem.setStockOnHand(lotMovementItem.getMovementQuantity());
-        } else {
-            lotOnHand = getLotOnHandByLot(existingLot);
-            if(lotOnHand.getQuantityOnHand() == 0) {
-                existingLot.setExpirationDate(lot.getExpirationDate());
-                createOrUpdateLot(existingLot);
-            }
-            if (lotMovementItem.isStockOnHandReset()) {
-                lotOnHand.setQuantityOnHand(lotMovementItem.getStockOnHand());
+                lotMovementItem.setStockOnHand(lotMovementItem.getMovementQuantity());
             } else {
-                lotOnHand.setQuantityOnHand(lotOnHand.getQuantityOnHand() + lotMovementItem.getMovementQuantity());
+                lotOnHand = getLotOnHandByLot(existingLot);
+                if (lotOnHand.getQuantityOnHand() == 0) {
+                    existingLot.setExpirationDate(lot.getExpirationDate());
+                    createOrUpdateLot(existingLot);
+                }
+                if (lotMovementItem.isStockOnHandReset()) {
+                    lotOnHand.setQuantityOnHand(lotMovementItem.getStockOnHand());
+                } else {
+                    lotOnHand.setQuantityOnHand(lotOnHand.getQuantityOnHand() + lotMovementItem.getMovementQuantity());
+                }
+                createOrUpdateLotOnHand(lotOnHand);
+                lotMovementItem.setLot(existingLot);
+                lotMovementItem.setStockOnHand(lotOnHand.getQuantityOnHand());
             }
-            createOrUpdateLotOnHand(lotOnHand);
-            lotMovementItem.setLot(existingLot);
-            lotMovementItem.setStockOnHand(lotOnHand.getQuantityOnHand());
+        } else {
+            if (existingLot == null) {
+                lotMovementItem.setStockOnHand(0L);
+            } else {
+                lotOnHand = getLotOnHandByLot(existingLot);
+                lotMovementItem.setStockOnHand(lotOnHand.getQuantityOnHand());
+            }
         }
     }
 

@@ -141,8 +141,8 @@ public class StockRepository {
                 @Override
                 public Object call() throws Exception {
                     createOrUpdate(stockCard);
-                    updateProductOfStockCard(stockCard.getProduct());
                     stockMovementRepository.batchCreateStockMovementItemAndLotItems(stockCard.generateInitialStockMovementItem());
+                    updateStockCardWithProduct(stockCard);
                     return null;
                 }
             });
@@ -159,6 +159,7 @@ public class StockRepository {
                     StockCard stockcard = stockMovementItem.getStockCard();
                     createOrUpdate(stockcard);
                     stockMovementRepository.batchCreateStockMovementItemAndLotItems(stockMovementItem);
+                    createOrUpdate(stockcard);
                     return null;
                 }
             });

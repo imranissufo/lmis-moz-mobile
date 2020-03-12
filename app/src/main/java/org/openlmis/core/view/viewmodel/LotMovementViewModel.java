@@ -65,7 +65,11 @@ public class LotMovementViewModel implements Serializable {
         lot.setExpirationDate(DateUtil.getActualMaximumDate(DateUtil.parseString(expiryDate, DateUtil.DATE_FORMAT_ONLY_MONTH_AND_YEAR)));
         lotMovementItem.setLot(lot);
 
-        lotMovementItem.setMovementQuantity(Long.parseLong(quantity));
+        if (StringUtils.isNoneBlank(quantity)) {
+            lotMovementItem.setMovementQuantity(Long.parseLong(quantity));
+        } else {
+            lotMovementItem.setMovementQuantity(null);
+        }
         return lotMovementItem;
     }
 

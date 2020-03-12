@@ -26,6 +26,8 @@ import com.j256.ormlite.field.DatabaseField;
 import com.j256.ormlite.field.ForeignCollectionField;
 import com.j256.ormlite.table.DatabaseTable;
 
+import org.apache.commons.lang3.StringUtils;
+import org.openlmis.core.LMISApp;
 import org.openlmis.core.manager.MovementReasonManager;
 import org.openlmis.core.utils.DateUtil;
 import org.openlmis.core.utils.ListUtil;
@@ -96,6 +98,7 @@ public class StockMovementItem extends BaseModel {
 
     public StockMovementItem(StockCard stockCard, InventoryViewModel model) {
         this.stockCard = stockCard;
+        this.stockOnHand = stockCard.stockOnHand;
         this.movementDate = new Date();
         this.reason = MovementReasonManager.INVENTORY;
         this.movementType = MovementReasonManager.MovementType.PHYSICAL_INVENTORY;
@@ -148,7 +151,9 @@ public class StockMovementItem extends BaseModel {
         if (!lotMovementViewModelList.isEmpty()) {
             long movementQuantity = 0;
             for (LotMovementViewModel lotMovementViewModel : lotMovementViewModelList) {
-                movementQuantity += Long.parseLong(lotMovementViewModel.getQuantity());
+                if(!StringUtils.isBlank(lotMovementViewModel.getQuantity())){
+                    movementQuantity += Long.parseLong(lotMovementViewModel.getQuantity());
+                }
             }
             setMovementQuantity(movementQuantity);
 
@@ -198,6 +203,24 @@ public class StockMovementItem extends BaseModel {
                 }).toList();
         setLotMovementItemListWrapper(existingLotMovementItemList);
         setNewAddedLotMovementItemListWrapper(newAddedLotMovementItemList);
+    }
+
+    public StockMovementItem createCompensateMovementItem(long adjustSoh) {
+        StockMovementItem compensate = new StockMovementItem();
+        compensate.setStockCard(this.getStockCard());
+        compensate.setStockOnHand(this.getStockOnHand() + adjustSoh);
+        compensate.setMovementDate(this.getMovementDate());
+        compensate.setMovementQuantity(adjustSoh);
+        if (adjustSoh > 0) {
+            compensate.setMovementType(MovementReasonManager.MovementType.POSITIVE_ADJUST);
+            compensate.setReason(MovementReasonManager.INVENTORY_POSITIVE);
+        } else {
+            compensate.setReason(MovementReasonManager.INVENTORY_NEGATIVE);
+            compensate.setMovementType(MovementReasonManager.MovementType.NEGATIVE_ADJUST);
+        }
+        compensate.setSignature(this.getSignature());
+        compensate.setCreatedTime(new Date(LMISApp.getInstance().getCurrentTimeMillis()));
+        return  compensate;
     }
 
     @Override

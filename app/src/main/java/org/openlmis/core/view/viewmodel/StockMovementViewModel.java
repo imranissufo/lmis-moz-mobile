@@ -131,12 +131,13 @@ public class StockMovementViewModel extends BaseStockMovementViewModel {
         stockMovementItem.setStockCard(stockCard);
 
         List<LotMovementViewModel> totalLotMovementViewModelList = new ArrayList<>();
-        totalLotMovementViewModelList.addAll(FluentIterable.from(existingLotMovementViewModelList).filter(new Predicate<LotMovementViewModel>() {
-            @Override
-            public boolean apply(LotMovementViewModel lotMovementViewModel) {
-                return lotMovementViewModel.quantityGreaterThanZero();
-            }
-        }).toList());
+        totalLotMovementViewModelList.addAll(existingLotMovementViewModelList);
+//        totalLotMovementViewModelList.addAll(FluentIterable.from(existingLotMovementViewModelList).filter(new Predicate<LotMovementViewModel>() {
+//            @Override
+//            public boolean apply(LotMovementViewModel lotMovementViewModel) {
+//                return lotMovementViewModel.quantityGreaterThanZero();
+//            }
+//        }).toList());
         totalLotMovementViewModelList.addAll(newLotMovementViewModelList);
         stockMovementItem.populateLotQuantitiesAndCalculateNewSOH(totalLotMovementViewModelList, stockMovementItem.getMovementType());
 
